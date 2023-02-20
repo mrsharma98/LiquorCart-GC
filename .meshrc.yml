@@ -1,0 +1,29 @@
+sources:
+  - name: graphcms
+    handler:
+      graphql:
+        useGETForQueries: true
+        endpoint: ${GRAPHCMS_URL}
+        retry: 3
+        operationHeaders:
+          gcms-locales: "{context.headers['gcms-locales']}"
+    transforms:
+      - filterSchema:
+          filters:
+            - 'Query.*.!locales'
+  - name: m2
+    handler:
+      graphql:
+        endpoint: ${MAGENTO_ENDPOINT}
+        useGETForQueries: true
+        schemaHeaders:
+          Store: '{context.headers.store}'
+          Authorization: '{context.headers.authorization}'
+        operationHeaders:
+          Store: '{context.headers.store}'
+          Authorization: '{context.headers.authorization}'
+          X-ReCaptcha: "{context.headers['x-recaptcha']}"
+          Preview-Version: "{context.headers['preview-version']}"
+          Content-Currency: "{context.headers['content-currency']}"
+serve:
+  playground: true
