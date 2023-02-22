@@ -1,5 +1,4 @@
 import { Logo as LogoBase } from '@graphcommerce/next-ui'
-import React = require('react')
 import Image from './liquorcart.png'
 
 export function Logo() {
