@@ -8,7 +8,7 @@ require('dotenv').config({ path: `${__dirname}/.env` })
 
 const withPWA = require('next-pwa')({
   dest: 'public',
-  disable: process.env.NODE_ENV === 'development',
+  // disable: process.env.NODE_ENV === 'development',
 })
 
 const obs = new PerformanceObserver((entryList) => {
