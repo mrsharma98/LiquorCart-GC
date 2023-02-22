@@ -1,3 +1,4 @@
+import header from '../../styles/header.module.css'
 import { CartFab } from '@graphcommerce/magento-cart'
 import { magentoMenuToNavigation } from '@graphcommerce/magento-category'
 import { CustomerFab, CustomerMenuFabItem } from '@graphcommerce/magento-customer'
@@ -21,15 +22,20 @@ import {
   NavigationOverlay,
   useNavigationSelection,
   useMemoDeep,
+  iconSearch,
+  iconShoppingBag,
 } from '@graphcommerce/next-ui'
 import { i18n } from '@lingui/core'
 import { Trans } from '@lingui/react'
-import { Divider, Fab } from '@mui/material'
+import { Divider, Fab, Typography } from '@mui/material'
 import PageLink from 'next/link'
 import { useRouter } from 'next/router'
 import { Footer } from './Footer'
 import { LayoutQuery } from './Layout.gql'
 import { Logo } from './Logo'
+import Link from 'next/link'
+import Image from 'next/image'
+import { CustomLayout } from './CustomLayout'
 
 export type LayoutNavigationProps = LayoutQuery &
   Omit<LayoutDefaultProps, 'footer' | 'header' | 'cartFab' | 'menuFab'>
@@ -39,6 +45,11 @@ export function LayoutNavigation(props: LayoutNavigationProps) {
 
   const selection = useNavigationSelection()
   const router = useRouter()
+  
+  const styles ={
+    
+    display: router.pathname ==='/' ? 'block' : 'none'
+  }
 
   return (
     <>
@@ -103,52 +114,63 @@ export function LayoutNavigation(props: LayoutNavigationProps) {
           itemPadding='md'
         />
       </NavigationProvider>
+    
+      <div  className={header.error}>
+        <div className={header.logo}>
+          <Logo/>
+        </div>
 
-      <LayoutDefault
-        {...uiProps}
-        noSticky={router.asPath.split('?')[0] === '/'}
-        header={
-          <>
-            <Logo />
-            <DesktopNavBar>
-              {menu?.items?.[0]?.children?.slice(0, 2).map((item) => (
-                <DesktopNavItem key={item?.uid} href={`/${item?.url_path}`}>
-                  {item?.name}
-                </DesktopNavItem>
-              ))}
+        <div className={header.nav}>
+            <ul className={header.list}>
+                
+                
+                <li>
+                    <WishlistFab icon={<IconSvg src={iconHeart} size='large' />} />
+                </li>
+                <li>
+                    <CustomerFab guestHref='/account/signin' authHref='/account' />
+                </li>
+               <li>
+                   <Link href='/cart'>
+                     <IconSvg src={iconShoppingBag} size='large' sx={{color:'black' ,marginTop:'15px'}}/>
+                   </Link>
+                </li>
+            </ul>
+        </div>
+      {/* //these are the product categoris */}
+          <div className={header.category}>
+              <DesktopNavBar>
+                      {menu?.items?.[0]?.children?.slice(0, 2).map((item) => (
+                        <DesktopNavItem key={item?.uid} href={`/${item?.url_path}`}>
+                          {item?.name}
+                        </DesktopNavItem>
+                      ))}
 
-              <DesktopNavItem onClick={() => selection.set([menu?.items?.[0]?.uid || ''])}>
-                {menu?.items?.[0]?.name}
-                <IconSvg src={iconChevronDown} />
-              </DesktopNavItem>
+                      <DesktopNavItem onClick={() => selection.set([menu?.items?.[0]?.uid || ''])}>
+                        {menu?.items?.[0]?.name}
+                        <IconSvg src={iconChevronDown} />
+                      </DesktopNavItem>
+                      
+              </DesktopNavBar>
+              <div className={header.search_bar}>
+                    {!router.pathname.startsWith('/search') && (
+                      <SearchLink href='/search' />
+                    )}
+              </div>
+              <div className={header.lady_image} style={styles}>
+                <Image src={'/images/lady.jpg'} width={1500} height={800}/>
+              </div>
+            
+              <CustomLayout
+                {...uiProps}
+                noSticky={router.asPath.split('?')[0] === '/'}
+              >
+              {children}
+              </CustomLayout>
+             
+          </div>
+      </div>
 
-              <DesktopNavItem href='/blog'>
-                <Trans id='Blog' />
-              </DesktopNavItem>
-            </DesktopNavBar>
-
-            <DesktopNavActions>
-              {!router.pathname.startsWith('/search') && (
-                <SearchLink href='/search' aria-label={i18n._(/* i18n */ 'Search...')} />
-              )}
-              <PageLink href='/service' passHref>
-                <Fab aria-label={i18n._(/* i18n */ 'Account')} size='large' color='inherit'>
-                  <IconSvg src={iconCustomerService} size='large' />
-                </Fab>
-              </PageLink>
-              <WishlistFab icon={<IconSvg src={iconHeart} size='large' />} />
-              <CustomerFab guestHref='/account/signin' authHref='/account' />
-              {/* The placeholder exists because the CartFab is sticky but we want to reserve the space for the <CartFab /> */}
-              <PlaceholderFab />
-            </DesktopNavActions>
-          </>
-        }
-        footer={<Footer footer={footer} />}
-        cartFab={<CartFab />}
-        menuFab={<NavigationFab onClick={() => selection.set([])} />}
-      >
-        {children}
-      </LayoutDefault>
     </>
   )
 }
