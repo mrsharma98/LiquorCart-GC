@@ -6,6 +6,7 @@ import { LayoutNavigation, LayoutNavigationProps, RowProduct, RowRenderer } from
 import { LayoutDocument } from '../components/Layout/Layout.gql'
 import { DefaultPageDocument, DefaultPageQuery } from '../graphql/DefaultPage.gql'
 import { graphqlSharedClient, graphqlSsrClient } from '../lib/graphql/graphqlSsrClient'
+import { Box, Typography } from '@mui/material'
 
 type Props = DefaultPageQuery & ProductListQuery
 type RouteProps = { url: string }
@@ -24,10 +25,14 @@ function CmsPage(props: Props) {
         metaRobots={page?.metaRobots.toLowerCase().split('_') as MetaRobots[] | undefined}
         canonical='/'
       />
+     {/* <Box
+     component="img"
+     alt="lady"
+     src="../components/Layout/lady.jpg"
+     /> */}
 
       <LayoutHeader floatingMd floatingSm />
-
-      {page && (
+      {/* {page && (
         <RowRenderer
           content={page.content}
           renderer={{
@@ -36,7 +41,7 @@ function CmsPage(props: Props) {
             ),
           }}
         />
-      )}
+      )} */}
     </>
   )
 }
